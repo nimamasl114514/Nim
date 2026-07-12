@@ -340,7 +340,7 @@ proc symId*(ins: Instr): SymId {.inline.} =
 
 proc immediateVal*(ins: Instr): int {.inline.} =
   assert ins.kind == ImmediateVal
-  result = cast[int](ins.operand)
+  result = int(ins.operand)
 
 proc litId*(ins: Instr): LitId {.inline.} =
   assert ins.kind in {StrVal, IntVal}

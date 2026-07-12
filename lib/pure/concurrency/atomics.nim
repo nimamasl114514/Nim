@@ -251,7 +251,7 @@ else:
       discard interlockedExchange(addr(location.value), cast[nonAtomicType(T)](desired))
 
     proc exchange*[T: Trivial](location: var Atomic[T]; desired: T; order: MemoryOrder = moSequentiallyConsistent): T {.inline.} =
-      cast[T](interlockedExchange(addr(location.value), cast[int64](desired)))
+      cast[T](interlockedExchange(addr(location.value), cast[nonAtomicType(T)](desired)))
     proc compareExchange*[T: Trivial](location: var Atomic[T]; expected: var T; desired: T; success, failure: MemoryOrder): bool {.inline.} =
       cast[T](interlockedCompareExchange(addr(location.value), cast[nonAtomicType(T)](desired), cast[nonAtomicType(T)](expected))) == expected
     proc compareExchange*[T: Trivial](location: var Atomic[T]; expected: var T; desired: T; order: MemoryOrder = moSequentiallyConsistent): bool {.inline.} =
@@ -392,8 +392,7 @@ else:
       if location.nonAtomicValue != expected:
         expected = location.nonAtomicValue
         return false
-      expected = desired
-      swap(location.nonAtomicValue, expected)
+      location.nonAtomicValue = desired
       return true
 
   proc compareExchangeWeak*[T: not Trivial](location: var Atomic[T]; expected: var T; desired: T; success, failure: MemoryOrder): bool {.inline.} =

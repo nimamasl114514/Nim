@@ -12,11 +12,8 @@
 
 from std/os import addFileExt, `/`, createDir
 
-import std / assertions
 import ".." / [ast, modulegraphs, renderer, transf, options, msgs, lineinfos]
-import nirtypes, nirinsts, ast2ir, nirlineinfos, nirfiles, nirvm
-
-import ".." / ic / [rodfiles, bitabs]
+import nirtypes, nirinsts, ast2ir, nirfiles, nirvm
 
 type
   PCtx* = ref object of TPassContext

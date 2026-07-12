@@ -780,7 +780,7 @@ proc typeId*(ins: Instr): TypeId {.inline.} =
 
 proc immediateVal*(ins: Instr): int {.inline.} =
   assert ins.kind == ImmediateValM
-  result = cast[int](ins.operand)
+  result = int(ins.operand)
 
 proc litId*(ins: Instr): LitId {.inline.} =
   assert ins.kind in {StrValM, IntValM}
@@ -972,7 +972,7 @@ proc eval(c: Bytecode; pc: CodePos; s: StackFrame; result: pointer; size: int) =
     copyMem result, src, size
   of LoadProcM:
     let procAddr = c.code[pc].operand
-    cast[ptr pointer](result)[] = cast[pointer](procAddr)
+    cast[ptr pointer](result)[] = cast[pointer](uint(procAddr))
   of LoadM:
     let (_, arg) = sons2(c.code, pc)
     let src = evalAddr(c, arg, s)

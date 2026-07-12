@@ -15,7 +15,7 @@ when defined(nimPreviewSlimSystem):
   import std/assertions
 
 import
-  options, ast, astalgo, msgs, idents, renderer,
+  options, ast, msgs, idents, renderer,
   magicsys, vmdef, modulegraphs, lineinfos, pathutils
 
 import ic / ic

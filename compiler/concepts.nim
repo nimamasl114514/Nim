@@ -11,7 +11,7 @@
 ## for details. Note this is a first implementation and only the "Concept matching"
 ## section has been implemented.
 
-import ast, astalgo, semdata, lookups, lineinfos, idents, msgs, renderer, types
+import ast, semdata, lookups, lineinfos, idents, msgs, renderer, types
 
 import std/intsets
 

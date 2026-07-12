@@ -123,7 +123,7 @@ proc getFileDir(filename: string): string =
   if not result.isAbsolute():
     result = getCurrentDir() / result
 
-proc execCmdEx2(command: string, args: openArray[string]; workingDir, input: string = ""): tuple[
+proc execCmdEx2(command: string, args: openArray[string]; workingDir: string = "", input: string = ""): tuple[
                 cmdLine: string,
                 output: string,
                 exitCode: int] {.tags:
