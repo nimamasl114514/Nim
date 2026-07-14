@@ -1930,7 +1930,7 @@ proc asgnToResultVar(c: PContext, n, le, ri: PNode) {.inline.} =
       if x.sym.kind == skResult and (x.typ.kind in {tyVar, tyLent} or classifyViewType(x.typ) != noView):
         n[0] = x # 'result[]' --> 'result'
         n[1] = takeImplicitAddr(c, ri, x.typ.kind == tyLent)
-        markResultVarIsPtr(c, x)
+        # leaks into proc sig, moved to cgen
         #echo x.info, " setting it for this type ", typeToString(x.typ), " ", n.info
       elif sfGlobal in x.sym.flags:
         markResultVarIsPtr(c, x)

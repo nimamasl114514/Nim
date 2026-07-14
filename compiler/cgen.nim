@@ -746,9 +746,10 @@ proc getTempCpp(p: BProc, t: PType, value: Rope): TLoc =
   inc(p.labels)
   result = TLoc(snippet: "T" & rope(p.labels) & "_", k: locTemp, lode: lodeTyp t,
                 storage: OnStack, flags: {})
+  # auto strips refs, decltype(auto) doesn't
   p.s(cpsStmts).addVar(kind = Local,
     name = result.snippet,
-    typ = "auto",
+    typ = "decltype(auto)",
     initializer = value)
 
 proc getIntTemp(p: BProc): TLoc =
@@ -1503,6 +1504,12 @@ proc genProcLvl3*(m: BModule, prc: PSym) =
     let resNode = prc.ast[resultPos]
     let res = resNode.sym # get result symbol
     if not isInvalidReturnType(m.config, prc.typ) and sfConstructor notin prc.flags:
+      # cpp: result needs ptr, sig needs ref, copy the type
+      var derefResultInReturn = false
+      if p.module.compileToCpp and res.typ.kind == tyVar:
+        res.typ = res.typ.exactReplica(m.idgen)
+        res.typ.incl tfVarIsPtr
+        derefResultInReturn = true
       if sfNoInit in prc.flags: incl(res, sfNoInit)
       if sfNoInit in prc.flags and p.module.compileToCpp and (let val = easyResultAsgn(procBody); val != nil):
         var a: TLoc = initLocExprSingleUse(p, val)
@@ -1520,7 +1527,9 @@ proc genProcLvl3*(m: BModule, prc: PSym) =
         else:
           initLocalVar(p, res, immediateAsgn=false)
       var returnBuilder = newBuilder("\t")
-      let rres = rdLoc(res.loc)
+      var rres = rdLoc(res.loc)
+      if derefResultInReturn:
+        rres = cDeref(rres)
       returnBuilder.addReturn(rres)
       returnStmt = extract(returnBuilder)
     elif sfConstructor in prc.flags:
